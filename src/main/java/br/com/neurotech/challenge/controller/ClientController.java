@@ -3,6 +3,7 @@ package br.com.neurotech.challenge.controller;
 import br.com.neurotech.challenge.dtos.ClientDto;
 import br.com.neurotech.challenge.service.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -53,5 +55,21 @@ public class ClientController {
         return ResponseEntity.ok()
                 .body(clientDto);
     }
+
+
+    @GetMapping
+    @Operation(summary = "Find all clients", description = "Retrieve a list of all Neurotech clients",
+            tags = {"Neurotech Clients"}, responses = {
+            @ApiResponse(description = "Success", responseCode = "200",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ClientDto.class)))) ,
+            @ApiResponse(description = "Internal Error", responseCode = "500", content = {@Content})
+    })
+    public ResponseEntity<List<ClientDto>> getAllClients() {
+        List<ClientDto> clients = service.findAll();
+        return ResponseEntity.ok()
+                .body(clients);
+    }
+
 
 }

@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class ClientService {
@@ -55,6 +58,20 @@ public class ClientService {
         } catch (Exception ex) {
             logger.error("Erro ao buscar cliente por ID {}: {}", id, ex.getMessage(), ex);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar cliente por ID", ex);
+        }
+    }
+
+    public List<ClientDto> findAll() {
+        try {
+            logger.info("Buscando de todos os clientes.");
+            List<NeurotechClient> clients = repository.findAll();
+            logger.info("Clientes encontrados: {}", clients.size());
+            return clients.stream()
+                    .map(converter::convertToDto)
+                    .collect(Collectors.toList());
+        } catch (Exception ex) {
+            logger.error("Erro ao buscar clientes: {}", ex.getMessage(), ex);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar clientes no banco de dados", ex);
         }
     }
 }
