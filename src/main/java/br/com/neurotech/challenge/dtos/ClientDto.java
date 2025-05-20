@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class ClientDto {
+    private Long id;
     private String name;
     private Integer age;
     private Double income;
