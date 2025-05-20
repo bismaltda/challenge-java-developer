@@ -1,6 +1,7 @@
 package br.com.neurotech.challenge.service;
 
 
+import br.com.neurotech.challenge.controller.ClientController;
 import br.com.neurotech.challenge.converter.Converter;
 import br.com.neurotech.challenge.dtos.ClientDto;
 import br.com.neurotech.challenge.entity.NeurotechClient;
@@ -15,7 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @Service
@@ -111,6 +116,11 @@ public class ClientService {
             logger.error("Erro ao excluir cliente com ID {}: {}", id, ex.getMessage(), ex);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao excluir cliente no banco de dados", ex);
         }
+    }
+
+    public Map<String, String> getHateoasLinks(Long id) {
+        String selfLink = linkTo(methodOn(ClientController.class).getClientById(id)).withSelfRel().getHref();
+        return Map.of("self", selfLink);
     }
 
 }

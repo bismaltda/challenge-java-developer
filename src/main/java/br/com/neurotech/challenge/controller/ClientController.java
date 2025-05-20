@@ -35,9 +35,10 @@ public class ClientController {
     })
     public ResponseEntity<ClientDto> createClient(@Valid @RequestBody ClientDto client) {
         ClientDto createdClient = service.create(client);
-
+        Map<String, String> hateoasLinks = service.getHateoasLinks(createdClient.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
+                .header("Location", hateoasLinks.get("self"))
                 .body(createdClient);
     }
 
@@ -51,8 +52,10 @@ public class ClientController {
     })
     public ResponseEntity<ClientDto> getClientById(@PathVariable Long id) {
         ClientDto clientDto = service.findById(id);
+        Map<String, String> hateoasLinks = service.getHateoasLinks(id);
 
         return ResponseEntity.ok()
+                .header("Location", hateoasLinks.get("self"))
                 .body(clientDto);
     }
 
@@ -68,6 +71,7 @@ public class ClientController {
     public ResponseEntity<List<ClientDto>> getAllClients() {
         List<ClientDto> clients = service.findAll();
         return ResponseEntity.ok()
+                .header("Location", linkToSelfList())
                 .body(clients);
     }
 
@@ -85,8 +89,10 @@ public class ClientController {
             @Valid @RequestBody ClientDto client) {
 
         ClientDto updatedClient = service.update(id, client);
+        Map<String, String> hateoasLinks = service.getHateoasLinks(id);
 
         return ResponseEntity.ok()
+                .header("Location", hateoasLinks.get("self"))
                 .body(updatedClient);
     }
 
@@ -99,10 +105,14 @@ public class ClientController {
     })
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         service.delete(id);
+        Map<String, String> hateoasLinks = service.getHateoasLinks(id);
 
         return ResponseEntity.noContent()
+                .header("Location", hateoasLinks.get("self"))
                 .build();
     }
 
-
+    private String linkToSelfList() {
+        return "/api/neurotech-clients";
+    }
 }
