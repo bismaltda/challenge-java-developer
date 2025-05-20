@@ -90,5 +90,19 @@ public class ClientController {
                 .body(updatedClient);
     }
 
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a client by ID", description = "Remove a Neurotech client from the system by their ID",
+            tags = {"Neurotech Clients"}, responses = {
+            @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = {@Content}),
+            @ApiResponse(description = "Internal Error", responseCode = "500", content = {@Content})
+    })
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+        service.delete(id);
+
+        return ResponseEntity.noContent()
+                .build();
+    }
+
 
 }

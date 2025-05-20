@@ -97,4 +97,20 @@ public class ClientService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar cliente no banco de dados", ex);
         }
     }
+
+    @Transactional
+    public void delete(Long id) {
+        try {
+            logger.info("Deletando cliente com ID: {}", id);
+            if (!repository.existsById(id)) {
+                throw new ClientNotFoundException("Cliente com ID " + id + " não encontrado.");
+            }
+            repository.deleteById(id);
+            logger.info("Cliente com ID {} deletado com sucesso.", id);
+        } catch (Exception ex) {
+            logger.error("Erro ao excluir cliente com ID {}: {}", id, ex.getMessage(), ex);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao excluir cliente no banco de dados", ex);
+        }
+    }
+
 }
