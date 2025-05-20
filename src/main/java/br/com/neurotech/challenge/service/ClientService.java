@@ -74,4 +74,27 @@ public class ClientService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar clientes no banco de dados", ex);
         }
     }
+
+    @Transactional
+    public ClientDto update(Long id, @Valid ClientDto clientDto) {
+        try {
+            logger.info("Atualizando cliente com ID: {}", id);
+            NeurotechClient client = converter.convertToModel(clientDto);
+
+            NeurotechClient existingClient = repository.findById(id)
+                    .orElseThrow(() -> new ClientNotFoundException("Cliente com ID " + id + " não encontrado."));
+
+            existingClient.setName(client.getName());
+            existingClient.setAge(client.getAge());
+            existingClient.setIncome(client.getIncome());
+
+            NeurotechClient updatedClient = repository.save(existingClient);
+            ClientDto dto = converter.convertToDto(updatedClient);
+            logger.info("Cliente com ID {} atualizado com sucesso.", id);
+            return dto;
+        } catch (Exception ex) {
+            logger.error("Erro ao atualizar cliente com ID {}: {}", id, ex.getMessage(), ex);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar cliente no banco de dados", ex);
+        }
+    }
 }

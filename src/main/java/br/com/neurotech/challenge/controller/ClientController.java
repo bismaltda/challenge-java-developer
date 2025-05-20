@@ -71,5 +71,24 @@ public class ClientController {
                 .body(clients);
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a client", description = "Update details of an existing Neurotech client",
+            tags = {"Neurotech Clients"}, responses = {
+            @ApiResponse(description = "Success", responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = ClientDto.class))),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = {@Content}),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = {@Content}),
+            @ApiResponse(description = "Internal Error", responseCode = "500", content = {@Content})
+    })
+    public ResponseEntity<ClientDto> updateClient(
+            @PathVariable Long id,
+            @Valid @RequestBody ClientDto client) {
+
+        ClientDto updatedClient = service.update(id, client);
+
+        return ResponseEntity.ok()
+                .body(updatedClient);
+    }
+
 
 }
